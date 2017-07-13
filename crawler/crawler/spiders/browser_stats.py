@@ -11,6 +11,6 @@ class BrowserStatsSpider(scrapy.Spider):
         for table in response.css('table'):             
             yield{
                 'name': 'Browsers Stats ' + table.css("th::text").extract_first(),
-                'header': table.xpath("//th/text()").extract(),
+                'header': table.css("th::text").extract(),
                 'data': table.css("td::text").extract()
             }
