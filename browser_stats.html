@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/c3.min.css">
+  </head>
+  <body>
+    <div id="chart"></div>
+
+    <script src="js/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/c3.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script>
+    
+    var raw_json;
+    var parsed_data;
+    var chart;
+    
+    function drawChart(){
+    
+        var chart = c3.generate({         
+            data: {
+                rows: parsed_data[0],
+                type : 'donut',
+                onmouseover: function (d, i) { console.log("onmouseover", d, i, this); },
+                onmouseout: function (d, i) { console.log("onmouseout", d, i, this); },
+                onclick: function (d, i) { console.log("onclick", d, i, this); },
+            },
+            donut:{
+                title: "Web Browser Usage 2017"
+            },
+            bindto: '#chart'
+        });
+    
+    }    
+    
+    window.onload = function(){
+    
+        function parseJSON(json){
+                parsed_data = [];
+                table = [];
+                for (i=0; i< json.length; i++){
+                    row = []
+                    // Headers
+                    for (j=1; j<json[i].header.length; j++){
+                        row.push(json[i].header[j])
+                    }
+                    table.push(row);
+                    row = [];
+                    // Data
+                    for (j=0; j<=json[i].data.length; j++){
+                        if (j%json[i].header.length != 0){
+                            row.push(json[i].data[j].replace(" %", ""));
+                        }else if(j != 0){
+                            table.push(row);
+                            row = [];
+                        }
+                    }
+                    parsed_data.push(table)
+                    table = [];
+                }
+                console.log( "JSON Parsed Data: " + parsed_data );
+            }
+    
+            // Load JSON file
+            $.getJSON( "crawler/browser-stats.json", function( json ) {
+                raw_json = json;
+                //console.log( "JSON Data: " + JSON.stringify(raw_json) );                
+            }).done(function(raw_json){
+                parseJSON(raw_json);
+                //console.log( "Data to show: " + parsed_data[0]);
+                drawChart();
+            });           
+    
+    }
+    </script>
+  </body>
+</html>
