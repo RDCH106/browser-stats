@@ -20,7 +20,7 @@ $ cd crawler
 $ pip install -r requirements_lin.txt
 ```
 
-Install dependencies for Linux with:
+Install dependencies for Windows with:
 
 ```
 $ cd crawler
